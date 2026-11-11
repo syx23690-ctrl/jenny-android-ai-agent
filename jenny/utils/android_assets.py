@@ -15,11 +15,11 @@ if TYPE_CHECKING:
 
 # File del workspace che appartengono all'utente o a Dream. Si creano al primo
 # avvio e non si toccano mai più: `SOUL.md` e `USER.md` li riscrive Dream,
-# `AGENTS.md` e `HEARTBEAT.md` li scrive l'utente. Sovrascriverli con la copia
+# `AGENTS.md` lo scrive l'utente. Sovrascriverli con la copia
 # del pacchetto cancellerebbe la personalità del bot e le istruzioni scritte a
 # mano.
 _USER_OWNED_TEMPLATES = [
-    "AGENTS.md", "SOUL.md", "USER.md", "HEARTBEAT.md",
+    "AGENTS.md", "SOUL.md", "USER.md",
     "memory/MEMORY.md",
 ]
 
@@ -36,17 +36,23 @@ _USER_OWNED_TEMPLATES = [
 _SYSTEM_PROMPT_TEMPLATES = [
     "agent/identity.md", "agent/tool_contract.md", "agent/subagent_system.md",
     "agent/subagent_announce.md", "agent/skills_section.md", "agent/apps_section.md",
+    "agent/diary_section.md",
     "agent/platform_policy.md", "agent/cron_reminder.md", "agent/cron_monitor.md",
     "agent/max_iterations_message.md", "agent/consolidator_archive.md",
+    "agent/inflight_checkpoint.md", "agent/consolidator_handoff.md",
     "agent/dream.md", "agent/dream_project.md", "agent/dream_review.md",
     "agent/gardener.md",
+    "agent/board_pass.md",
+    "agent/notebook_greeting.md",
     "agent/scheduling.md",
     "agent/project.md",
     "agent/readonly.md", "agent/project_init.md", "agent/tidy.md",
     "agent/orchestrator.md", "agent/tool_inventory.md",
+    "agent/plan_mode.md", "agent/plan_step.md", "agent/plan_done.md",
     "agent/_snippets/untrusted_content.md",
     "agent/types/researcher.md", "agent/types/writer.md", "agent/types/coder.md",
     "agent/types/analyst.md", "agent/types/sysadmin.md", "agent/types/operator.md",
+    "agent/types/app-builder.md", "agent/types/notebook-editor.md",
 ]
 
 _TEMPLATES_MANIFEST = [*_USER_OWNED_TEMPLATES, *_SYSTEM_PROMPT_TEMPLATES]
@@ -61,8 +67,8 @@ _TEMPLATES_MANIFEST = [*_USER_OWNED_TEMPLATES, *_SYSTEM_PROMPT_TEMPLATES]
 # ``retire_withdrawn_templates`` qui sotto, che quel file lo riscrive. Due copie
 # di un insieme che deve restare allineato è il guasto che questo repo continua
 # a dover riparare (tre copie della regola sui prefissi interni fra
-# ``session/keys.py``, ``agent/memory.py`` e ``agent/autocompact.py`; v.
-# ``roadmap/project-sessions.md``), quindi la definizione è una sola e chi la
+# ``session/keys.py``, ``agent/memory.py`` e ``agent/autocompact.py``),
+# quindi la definizione è una sola e chi la
 # vuole la importa.
 #
 # Servono perché il riconoscimento del template è un confronto con la copia
@@ -173,7 +179,6 @@ def template_digest(content: str) -> str:
 
 _SKILLS_MANIFEST = [
     "cron/SKILL.md",
-    "long-goal/SKILL.md",
     # llm-wiki
     "llm-wiki/SKILL.md",
     "llm-wiki/scripts/audit_review.py",
@@ -212,17 +217,56 @@ _UI_MANIFEST = [
     "assets/apps/jenny-kit.css",
     "assets/apps/jenny-sdk.js",
     "assets/bootstrap.js",
+    "assets/home-activity.js",
+    "assets/home-app.js",
+    "assets/home-audit.js",
+    "assets/home-band.js",
+    "assets/home-backup.js",
+    "assets/home-chat.js",
+    "assets/home-jenny.js",
+    "assets/home-board.js",
+    "assets/home-board-drawer.js",
+    "assets/home-board-automation.js",
+    "assets/home-board-agenda.js",
+    "assets/home-board-deck.js",
+    "assets/home-board-notes.js",
+    "assets/home-board-photos.js",
+    "assets/home-photo-viewer.js",
+    "assets/home-board-blocks.js",
+    "assets/home-apps-trash.js",
+    "assets/home-staged.js",
+    "assets/home-plan.js",
+    "assets/home-model.js",
+    "assets/home-pages.js",
+    "assets/home-strip.js",
+    "assets/home-work.js",
+    "assets/home-ui-query.js",
+    "assets/home-focus.js",
+    "assets/home-flower.js",
+    "assets/home-notebook.js",
+    "assets/home-reader.js",
+    "assets/home-style.css",
+    "assets/home-move.js",
+    "assets/home-over.js",
+    "assets/home-you.js",
+    "assets/home-updates.js",
+    "assets/home-who.js",
     "assets/i18n/en.json",
     "assets/i18n/it.json",
+    "assets/i18n/zh.json",
     "assets/jenny-body-front-hand.webp",
     "assets/jenny-body-front-idle.webp",
     "assets/jenny-body-front-think.webp",
+    "assets/jenny-body-side-idle.webp",
     "assets/jenny-face-front-angry.webp",
     "assets/jenny-face-front-happy.webp",
     "assets/jenny-face-front-normal-talk.webp",
     "assets/jenny-face-front-normal.webp",
     "assets/jenny-face-front-sad.webp",
     "assets/jenny-face-front-thinking.webp",
+    "assets/jenny-face-side-angry.webp",
+    "assets/jenny-face-side-happy.webp",
+    "assets/jenny-face-side-sad.webp",
     "assets/jenny-fall.webp",
     "assets/jenny-ground.webp",
     "assets/jenny-hang.webp",
@@ -234,54 +278,90 @@ _UI_MANIFEST = [
     "assets/jenny-walk1.webp",
     "assets/jenny-walk2.webp",
     "assets/mobile-app.js",
-    "assets/mobile-apps.js",
     "assets/mobile-chat.js",
     "assets/mobile-drawer.js",
-    "assets/mobile-graph.js",
     "assets/mobile-header.js",
     "assets/mobile-jenny.js",
     "assets/mobile-launcher.js",
-    "assets/mobile-onboarding.js",
+    "assets/mobile-remote-access.js",
     "assets/mobile-settings.js",
     "assets/mobile-style.css",
     "assets/mobile-ui-query.js",
-    "assets/mobile-wiki.js",
     "assets/mobile-workspace.js",
-    "assets/shared/advanced-mode.js",
+    # Il primo avvio: un documento suo, di nessuno dei due gusci.
+    "assets/onboarding-app.js",
+    "assets/onboarding-wizard.js",
+    "assets/shared/api-base.js",
     "assets/shared/api-client.js",
+    "assets/shared/apps-actions.js",
+    "assets/shared/apps-source.js",
     "assets/shared/backup-flow.js",
     "assets/shared/battery-exemption.js",
+    "assets/shared/bot-name.js",
     "assets/shared/commands-chip.js",
+    "assets/shared/content-link.js",
+    "assets/shared/conversation-list.js",
     "assets/shared/cron-view.js",
     "assets/shared/dialog.js",
-    "assets/shared/home-view.js",
+    "assets/shared/dom.js",
+    "assets/shared/editable-focus.js",
+    "assets/shared/extensions.js",
+    "assets/shared/first-run.js",
+    "assets/shared/history-pager.js",
+    "assets/shared/horizontal-swipe.js",
     "assets/shared/i18n.js",
     "assets/shared/image-handler.js",
     "assets/shared/image-lightbox.js",
+    "assets/shared/jenny-mascot.js",
+    "assets/shared/unseen-replies.js",
     "assets/shared/keyboard.js",
     "assets/shared/launcher-rank.js",
+    "assets/shared/launcher-usage-store.js",
     "assets/shared/longpress.js",
+    "assets/shared/markdown.js",
+    "assets/shared/model-catalog.js",
+    "assets/shared/media.js",
+    "assets/shared/native-bridge.js",
+    "assets/shared/origin.js",
+    "assets/shared/mascot-drag.js",
+    "assets/shared/mascot-motion.js",
+    "assets/shared/mascot-squash.js",
     "assets/shared/mascot.js",
     "assets/shared/pinch-zoom.js",
+    "assets/shared/place-card.js",
+    "assets/shared/places.js",
+    "assets/shared/project-create.js",
     "assets/shared/project-delete.js",
     "assets/shared/provider-brand.js",
+    "assets/shared/reply.js",
     "assets/shared/rpc-client.js",
+    "assets/shared/rich-content.js",
     "assets/shared/scope-chip.js",
     "assets/shared/selection.js",
+    "assets/shared/skills-view.js",
+    "assets/shared/spines.js",
+    "assets/shared/wire-error.js",
     "assets/shared/write-switch.js",
     "assets/shared/session-manager.js",
+    "assets/shared/sheet.js",
     "assets/shared/state.js",
     "assets/shared/subagent-policy.js",
     "assets/shared/telegram-pairing.js",
     "assets/shared/theme.js",
-    "assets/shared/tree-renderer.js",
+    "assets/shared/turns.js",
+    "assets/shared/update-flow.js",
+    "assets/shared/update-watch.js",
+    "assets/shared/when.js",
+    "assets/shared/chat-time.js",
     "assets/shared/type-ahead.js",
+    "assets/shared/ui-query.js",
     "assets/shared/utils.js",
     "assets/shared/wiki-search.js",
     "assets/shared/ws-manager.js",
     "assets/vendor/@tabler/icons-webfont@3.19.0/LICENSE",
-    "assets/vendor/@tabler/icons-webfont@3.19.0/dist/fonts/tabler-icons.ttf",
-    "assets/vendor/@tabler/icons-webfont@3.19.0/dist/fonts/tabler-icons.woff",
+    # Solo woff2: la WebView (minSdk 26) lo legge sempre, e ttf e woff (3,7 MB)
+    # non venivano mai scaricati. Il loro ``url()`` e' stato tolto anche dal CSS
+    # vendor: chi lo riscarica deve rifare le due cose insieme.
     "assets/vendor/@tabler/icons-webfont@3.19.0/dist/fonts/tabler-icons.woff2",
     "assets/vendor/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css",
     "assets/vendor/codemirror@5.65.16/LICENSE",
@@ -332,81 +412,90 @@ _UI_MANIFEST = [
     "assets/vendor/fonts/uU9NCBsR6Z2vfE9aq3bh3tSDulI.woff2",
     "assets/vendor/fonts/uU9NCBsR6Z2vfE9aq3bhZ_Wmh2uX.woff2",
     "assets/vendor/highlight.js@11.11.1/LICENSE",
-    "assets/vendor/highlight.js@11.11.1/build/highlight.min.js",
-    "assets/vendor/highlight.js@11.11.1/styles/github-dark.min.css",
-    "assets/vendor/highlight.js@11.11.1/styles/github.min.css",
     "assets/vendor/katex@0.16.10/LICENSE",
     "assets/vendor/katex@0.16.10/dist/contrib/auto-render.min.js",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_AMS-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_AMS-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_AMS-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Caligraphic-Bold.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Caligraphic-Bold.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Caligraphic-Bold.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Caligraphic-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Caligraphic-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Caligraphic-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Fraktur-Bold.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Fraktur-Bold.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Fraktur-Bold.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Fraktur-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Fraktur-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Fraktur-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Bold.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Bold.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Bold.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-BoldItalic.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-BoldItalic.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-BoldItalic.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Italic.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Italic.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Italic.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Main-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Math-BoldItalic.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Math-BoldItalic.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Math-BoldItalic.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Math-Italic.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Math-Italic.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Math-Italic.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Bold.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Bold.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Bold.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Italic.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Italic.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Italic.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_SansSerif-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Script-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Script-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Script-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size1-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size1-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size1-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size2-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size2-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size2-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size3-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size3-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size3-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size4-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size4-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Size4-Regular.woff2",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Typewriter-Regular.ttf",
-    "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Typewriter-Regular.woff",
     "assets/vendor/katex@0.16.10/dist/fonts/KaTeX_Typewriter-Regular.woff2",
     "assets/vendor/katex@0.16.10/dist/katex.min.css",
     "assets/vendor/katex@0.16.10/dist/katex.min.js",
-    "assets/vendor/marked@15.0.7/LICENSE",
-    "assets/vendor/marked@15.0.7/marked.min.js",
     "assets/vendor/mermaid@10/LICENSE",
     "assets/vendor/mermaid@10/dist/mermaid.min.js",
+    "assets/vendor/highlight.js@11.11.1/build/highlight.min.js",
+    "assets/vendor/highlight.js@11.11.1/styles/github-dark.min.css",
+    "assets/vendor/highlight.js@11.11.1/styles/github.min.css",
+    "assets/vendor/marked@15.0.7/LICENSE",
+    "assets/vendor/marked@15.0.7/marked.min.js",
+    "assets/vendor/qrcode-generator@1.4.4/LICENSE",
+    "assets/vendor/qrcode-generator@1.4.4/qrcode.min.js",
+    # I documenti della WebUI (v. _SHELL_DOCUMENTS in jenny/webui/ws_http.py).
+    # Chi ne aggiunge uno e si dimentica questa riga non ottiene un 404:
+    # `_serve_static` ricade su index.html e serve un'altra interfaccia.
+    # ``index.html`` e' **la casa**: e' il documento che il guscio nativo carica
+    # (GATEWAY_PATH = "/html-mobile/") e su cui ricade ogni percorso ignoto.
+    # L'officina ha il suo nome e si raggiunge di proposito; l'onboarding e' il
+    # primo avvio, e ci rimandano entrambe quando non c'e' ancora un provider.
     "index.html",
+    "workshop.html",
+    "onboarding.html",
 ]
 
 _extracted_registry: dict[str, Path] = {}
+
+
+def ui_sources() -> dict[str, tuple[str, str]]:
+    """Ogni file della WebUI: ``percorso sotto ui/`` → ``(pacchetto, file)``.
+
+    Il core da ``_UI_MANIFEST``, più i file delle estensioni impacchettate in
+    questa build sotto ``assets/ext/<nome>/`` (``jenny/extensions.py``). È
+    l'elenco di cosa si estrae, di cosa si serve dai byte del pacchetto e di
+    cosa ``retire_withdrawn_ui_files`` lascia stare.
+    """
+    from jenny import extensions
+
+    sources = {rel: ("jenny.templates.ui", rel) for rel in _UI_MANIFEST}
+    sources.update(extensions.ui_sources())
+    return sources
+
+
+def extract_extension_ui(ui_dir: Path) -> int:
+    """Estrae i file WebUI delle estensioni in ``ui_dir/assets/ext/<nome>/``.
+
+    Come ``extract_package_dir`` per il core: dal manifest dichiarato
+    dall'estensione, riscrivendo solo i file cambiati.
+    """
+    from jenny import extensions
+
+    count = 0
+    for rel, (package, path) in extensions.ui_sources().items():
+        data = read_asset(package, path)
+        if data is None:
+            logger.warning("Extension UI file missing from its package: {}/{}", package, path)
+            continue
+        target = ui_dir / rel
+        if _already_identical(target, data):
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        _write_bytes_force(target, data)
+        count += 1
+    return count
 
 
 def read_asset(module: str, path: str) -> bytes | None:
@@ -469,6 +558,23 @@ def _get_manifest(package: str) -> list[str] | None:
     return None
 
 
+def bundled_skill_names() -> frozenset[str]:
+    """I nomi delle skill che vengono con l'app.
+
+    Sono le cartelle di ``_SKILLS_MANIFEST`` che hanno un ``SKILL.md``: lo stesso
+    elenco che ``sync_workspace_templates`` ri-estrae in ``workspace/skills/`` a
+    ogni avvio, **sovrascrivendole**. Per questo chi deve sapere se una modifica
+    a una skill sopravvive al riavvio chiede qui, e non a ``source`` — che per
+    le skill estratte e per quelle scritte dall'utente vale ``"workspace"`` in
+    entrambi i casi.
+    """
+    return frozenset(
+        entry.split("/", 1)[0]
+        for entry in _SKILLS_MANIFEST
+        if entry.count("/") == 1 and entry.endswith("/SKILL.md")
+    )
+
+
 def _write_bytes_force(target: Path, data: bytes) -> None:
     """Scrive *data* su *target*, sopravvivendo a un file mirror read-only.
 
@@ -490,6 +596,40 @@ def _write_bytes_force(target: Path, data: bytes) -> None:
     target.write_bytes(data)
 
 
+def _already_identical(target: Path, data: bytes) -> bool:
+    """*target* contiene gia' esattamente *data*?
+
+    Serve a non riscrivere un file che non e' cambiato, ed e' un risparmio piu'
+    grosso di quanto sembri. I prompt di sistema, la UI e le skill si estraggono
+    **senza** ``skip_existing`` di proposito — e' l'unico modo in cui la
+    correzione di un prompt arriva su un telefono gia' installato (v.
+    ``sync_workspace_templates``) — ma "riscrivere sempre" e "riscrivere quando
+    e' cambiato" mantengono la stessa promessa: il byte diverso atterra in tutti
+    e due i casi. La differenza e' solo in quante scritture su flash costa un
+    avvio in cui non e' cambiato niente, cioe' **tutti** gli avvii tranne quello
+    dopo un aggiornamento.
+
+    Misurato sul Titan 2 il 20/09/2026: 272 file riscritti per passata, e su
+    Android le passate sono due (``android_entry`` e ``runtime/container``, due
+    entry point che non sapevano l'uno dell'altro) — 544 scritture a ogni
+    accensione per lasciare il disco come l'avevano trovato.
+
+    La taglia si guarda per prima perche' risponde da sola nel caso che conta —
+    un file cambiato di solito cambia anche di lunghezza — e costa una ``stat``
+    invece di una lettura intera.
+
+    Qualunque guaio in lettura (file assente, permessi, un symlink rotto)
+    risponde "no": non sapere vuol dire scrivere, che e' il comportamento di
+    prima e non puo' peggiorare niente.
+    """
+    try:
+        if target.stat().st_size != len(data):
+            return False
+        return target.read_bytes() == data
+    except OSError:
+        return False
+
+
 def extract_package_dir(
     package: str,
     dest: Path,
@@ -507,7 +647,7 @@ def extract_package_dir(
     """
     manifest = _get_manifest(package)
     if manifest is None:
-        # Design a manifest esplicito (vedi .agent/gotchas.md): un package senza
+        # Design a manifest esplicito: un package senza
         # manifest non deve mai finire in un walk silenzioso, che sul dispositivo
         # farebbe arrivare/mancare file senza traccia. Fallire esplicito.
         raise ValueError(
@@ -537,6 +677,13 @@ def extract_package_dir(
             continue
         data = read_asset(package, rel_path)
         if data is not None:
+            # Gia' identico: niente da scrivere. Il conteggio diventa cosi'
+            # "quanti file sono **cambiati**" invece di "quanti ne ho riscritti
+            # comunque" — che e' anche la domanda a cui quel log serviva
+            # rispondere (v. l'intestazione di tests/utils/test_template_refresh.py:
+            # «tre prompt modificati e uno aggiunto, il log diceva Extracted 1»).
+            if _already_identical(target, data):
+                continue
             target.parent.mkdir(parents=True, exist_ok=True)
             _write_bytes_force(target, data)
             count += 1
@@ -649,6 +796,139 @@ def retire_withdrawn_templates(dest: Path) -> list[str]:
             name, label,
         )
     return rewritten
+
+
+def _retire_absent_extensions(ui_dir: Path) -> list[str]:
+    """Toglie per intero ``assets/ext/<nome>/`` delle estensioni che questa build non ha.
+
+    Per intero, traduzioni comprese: una cartella d'estensione è tutta nostra, e
+    un'estensione assente non deve lasciare niente di servibile. Ci arriva per
+    esempio da una build che l'aveva, sostituita da una che non ce l'ha.
+    """
+    import shutil
+
+    from jenny import extensions
+
+    root = ui_dir / extensions.EXT_UI_DIR
+    if not root.is_dir() or root.is_symlink():
+        return []
+    present = {ext.name for ext in extensions.load()}
+    removed: list[str] = []
+    for child in sorted(root.iterdir()):
+        if child.name in present:
+            continue
+        rel = child.relative_to(ui_dir).as_posix()
+        try:
+            if child.is_dir() and not child.is_symlink():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
+        except OSError:
+            logger.opt(exception=True).warning("Withdrawn extension UI not removed: {}", rel)
+            continue
+        removed.append(rel + "/")
+    return removed
+
+
+#: I suffissi del codice della WebUI: gli stessi che ``ws_http`` serve dai byte
+#: canonici del package. Solo questi si ritirano da ``ui/``.
+_UI_CODE_SUFFIXES = (".html", ".js", ".css")
+
+
+def retire_withdrawn_ui_files(ui_dir: Path) -> list[str]:
+    """Toglie da ``workspace/ui`` il codice della WebUI che il package non spedisce piu'.
+
+    ``extract_package_dir`` scrive i file del manifest e non cancella mai niente:
+    un file rinominato o tolto restava sul disco con il nome vecchio, e il
+    gateway lo serviva ancora, perche' ``_serve_static`` ricade sul disco per
+    tutto cio' che il manifest non conosce. Misurato sul Titan 2 il 25/09/2026,
+    dopo il rinomino in inglese: ``officina.html`` e i ``casa-*.js`` erano ancora
+    li', e ``/html-mobile/officina.html`` rispondeva con l'officina di prima
+    sopra i moduli di adesso.
+
+    Il perimetro e' stretto di proposito: solo HTML, JS e CSS, cioe' codice
+    nostro che fuori dal manifest non ha motivo di esistere; font, immagini e
+    qualunque altra cosa restano. Un symlink non si segue e non si toglie.
+    ``ui/`` non e' una cartella dell'utente (``workspace_files`` la nasconde),
+    quindi non c'e' niente di suo da salvare.
+    """
+    if not ui_dir.is_dir():
+        return []
+    shipped = set(ui_sources())
+    removed = _retire_absent_extensions(ui_dir)
+    for path in sorted(ui_dir.rglob("*")):
+        if path.suffix not in _UI_CODE_SUFFIXES or path.is_symlink() or not path.is_file():
+            continue
+        rel = path.relative_to(ui_dir).as_posix()
+        if rel in shipped:
+            continue
+        try:
+            path.unlink()
+        except OSError:
+            logger.opt(exception=True).warning("Withdrawn UI file not removed: {}", rel)
+            continue
+        removed.append(rel)
+    if removed:
+        logger.info("Removed {} withdrawn UI files: {}", len(removed), ", ".join(removed))
+    return removed
+
+
+# Le skill che il package non spedisce piu', con le versioni che ha spedito: il
+# digest (``template_digest``) di ogni ``SKILL.md`` uscito, e da dove. Una copia
+# nel workspace identica a una di queste e' nostra e si toglie; una copia che
+# l'utente ha cambiato e' sua, e resta.
+_RETIRED_SKILL_DIGESTS: dict[str, dict[str, str]] = {
+    # Il goal sostenuto, tolto il 01/11/2026: senza, la skill continuava a
+    # dire al modello di chiamare ``long_task``, un tool che non esiste piu'.
+    "long-goal/SKILL.md": {
+        "59da54b6a6bd9d50eea96f1359c06e33a102413c5f0d4b67626ab0659613df10":
+            "v0.3.0 (8833b94)",
+        "102fe8f7e1d4d23961d6e674e55233cbb58c2acc958eff43dc8391f83218be31":
+            "from b5499bf",
+        "aafad35e144ff85e463e808ad5a78a689ab2db94b19fba5268669ef795b1c40c":
+            "from f5888a1 to v2.0.0",
+    },
+}
+
+
+def retire_withdrawn_skills(skills_dir: Path) -> list[str]:
+    """Toglie da ``workspace/skills`` le skill nostre che il package non spedisce piu'.
+
+    ``extract_package_dir`` scrive e non cancella mai: una skill tolta dal
+    package restava nel workspace, e il caricatore delle skill legge solo da li',
+    quindi il modello continuava a vederla. ``skills/`` pero' e' anche dell'utente
+    (le skill che scrive lui), quindi la stessa regola di
+    :func:`retire_withdrawn_templates`: si toglie solo un file **identico** a una
+    versione spedita, per digest esatto. Niente match approssimati; un symlink non
+    si segue e non si toglie. La cartella se ne va solo se resta vuota.
+    """
+    removed: list[str] = []
+    for rel, shipped in _RETIRED_SKILL_DIGESTS.items():
+        target = skills_dir / rel
+        if target.is_symlink() or not target.is_file():
+            continue
+        try:
+            content = target.read_text(encoding="utf-8")
+        except (OSError, ValueError):
+            continue
+        label = shipped.get(template_digest(content))
+        if label is None:
+            logger.info("Withdrawn skill {} kept: it differs from every shipped version", rel)
+            continue
+        try:
+            target.unlink()
+        except OSError:
+            logger.opt(exception=True).warning("Withdrawn skill not removed: {}", rel)
+            continue
+        removed.append(rel)
+        logger.info("Removed withdrawn skill {} ({})", rel, label)
+        folder = target.parent
+        if folder != skills_dir and not folder.is_symlink():
+            try:
+                folder.rmdir()
+            except OSError:
+                pass  # non vuota: dentro c'e' qualcosa dell'utente
+    return removed
 
 
 _JENNY_SRC_KEY = "jenny_src"

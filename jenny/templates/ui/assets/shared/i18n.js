@@ -1,12 +1,26 @@
-export class I18n {
+/* La lingua e' quella del telefono, e non si cambia da dentro l'app: il
+   selettore dell'officina e' uscito col «Trim 2/5» (3d57980) e la casa non ne
+   ha uno per scelta (casa-tu-e-jenny-checklist). Fino al 24/09/2026 qui si
+   leggeva ancora `localStorage.locale`, che solo quel selettore scriveva: chi
+   l'aveva usato restava fermo sulla lingua scelta allora, senza piu' un modo
+   di cambiarla. Se tornera' una scelta per-app sara' `android:localeConfig`,
+   che ricrea l'Activity: un cambio a caldo non serve. */
+class I18n {
   constructor() {
-    this.locale = localStorage.getItem('locale') || this.detectLocale();
+    this.locale = this.detectLocale();
     this.translations = {};
-    this._listeners = [];
+    /* Le traduzioni delle estensioni (`shared/extensions.js`): `{locale: url}`
+       per estensione, fuse sopra quelle del core a ogni `load`. */
+    this._sources = [];
+  }
+
+  /** Aggiunge le traduzioni di un'estensione. Va chiamata prima di `load`. */
+  addSource(urlsByLocale) {
+    if (urlsByLocale && typeof urlsByLocale === 'object') this._sources.push(urlsByLocale);
   }
 
   detectLocale() {
-    const nav = navigator.language;
+    const nav = (navigator.language || '').toLowerCase();
     const supported = ['it', 'en', 'zh'];
     return supported.find(s => s === nav) || supported.find(s => nav.startsWith(s)) || 'en';
   }
@@ -16,13 +30,25 @@ export class I18n {
       const res = await fetch(`/assets/i18n/${locale}.json`);
       if (!res.ok) {
         // Risposta non valida: non sovrascrivere translations[locale] con dati
-        // errati, altrimenti setLocale() creda che il caricamento sia riuscito.
+        // errati.
         console.warn(`Failed to load locale ${locale}: HTTP ${res.status}`);
         return;
       }
       this.translations[locale] = await res.json();
     } catch (e) {
       console.warn(`Failed to load locale ${locale}:`, e);
+      return;
+    }
+    for (const urls of this._sources) {
+      const url = urls[locale];
+      if (!url) continue;
+      try {
+        const res = await fetch(url);
+        if (res.ok) _deepMerge(this.translations[locale], await res.json());
+        else console.warn(`Failed to load extension locale ${url}: HTTP ${res.status}`);
+      } catch (e) {
+        console.warn(`Failed to load extension locale ${url}:`, e);
+      }
     }
   }
 
@@ -40,39 +66,30 @@ export class I18n {
     return value;
   }
 
-  async setLocale(locale) {
-    // Carica le traduzioni prima di cambiare lingua: evita che i listener
-    // onLocaleChange girino su this.translations[locale] non ancora popolato
-    // (altrimenti t() ritorna la chiave grezza, es. "nav.chat").
-    if (!this.translations[locale]) {
-      await this.load(locale);
-    }
-    if (!this.translations[locale]) {
-      // Load fallito (es. rete): mantieni la lingua corrente invece di
-      // passare a chiavi grezze.
-      console.warn(`Locale ${locale} non disponibile: switch annullato`);
-      return;
-    }
-    this.locale = locale;
-    localStorage.setItem('locale', locale);
-    document.documentElement.lang = locale;
-    this._listeners.forEach(cb => cb(locale));
-  }
-
-  onLocaleChange(cb) {
-    this._listeners.push(cb);
-  }
-
-  get availableLocales() {
-    return ['it', 'en', 'zh'];
-  }
-
-  getLocaleName(locale) {
-    const names = {
-      'it': 'Italiano', 'en': 'English', 'zh': '简体中文'
-    };
-    return names[locale] || locale;
+  /** *key* tradotta, o *fallback* se la traduzione non c'e': un valore nuovo
+   *  del server (uno stato, un comando, un motivo) arriva prima dei file
+   *  i18n, e `t` stamperebbe la chiave grezza a schermo. */
+  tOr(key, fallback = '', params) {
+    const text = this.t(key, params);
+    return text === key ? fallback : text;
   }
 }
 
+/** Fonde *extra* dentro *base*: le foglie di *extra* vincono, i rami si uniscono. */
+function _deepMerge(base, extra) {
+  for (const [key, value] of Object.entries(extra || {})) {
+    if (value && typeof value === 'object' && !Array.isArray(value)
+        && base[key] && typeof base[key] === 'object' && !Array.isArray(base[key])) {
+      _deepMerge(base[key], value);
+    } else {
+      base[key] = value;
+    }
+  }
+  return base;
+}
+
 export const i18n = new I18n();
+
+/** Il traduttore da passare a chi ne vuole uno (`describeSchedule`,
+ *  `humanizeDuration`, `skillsSummary`, ...): erano sette lambda uguali. */
+export const tr = (key, params) => i18n.t(key, params);
